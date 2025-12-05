@@ -19,22 +19,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	sum := checkRanges(ranges)
+	sumPart1 := executePart1(ranges)
+	sumPart2 := executePart2(ranges)
 
-	fmt.Println("Sum of invalid IDs: ", sum)
+	fmt.Println("Part 1: ", sumPart1)
+	fmt.Println("Part 2: ", sumPart2)
 }
 
-func checkRanges(ranges []IdRange) int {
+func executePart1(ranges []IdRange) int {
 	totalSum := 0
 
 	for _, r := range ranges {
-		totalSum += sumInvalidIdInRange(r)
+		totalSum += sumInvalidIdInRangePart1(r)
 	}
 
 	return totalSum
 }
 
-func sumInvalidIdInRange(r IdRange) int {
+func sumInvalidIdInRangePart1(r IdRange) int {
 	var sum int
 
 	for i := r.Start; i <= r.End; i++ {
@@ -47,11 +49,47 @@ func sumInvalidIdInRange(r IdRange) int {
 			if p1 == p2 {
 				sum += i
 			}
-
 		}
 	}
 
 	return sum
+}
+
+func executePart2(ranges []IdRange) int {
+	totalSum := 0
+
+	for _, r := range ranges {
+		for i := r.Start; i <= r.End; i++ {
+			s := strconv.Itoa(i)
+			if isInvalidIdPart2(s) {
+				totalSum += i
+			}
+		}
+	}
+
+	return totalSum
+}
+
+func isInvalidIdPart2(s string) bool {
+	n := len(s)
+
+	for i := 1; i <= n/2; i++ {
+		if n%i == 0 {
+			chunk := s[:i]
+			invalid := true
+			for j := i; j < n; j += i {
+				if s[j:j+i] != chunk {
+					invalid = false
+					break
+				}
+			}
+			if invalid {
+				return true
+			}
+		}
+
+	}
+	return false
 }
 
 func parseInput() ([]IdRange, error) {
